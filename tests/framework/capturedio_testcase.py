@@ -12,6 +12,9 @@ except ImportError:
 
 from tests.framework.patched_testcase import PatchedTestCase
 
+import os
+os.environ["GLOBUS_SDK_ENVIRONMENT"] = "sandbox"
+
 
 class CapturedIOTestCase(PatchedTestCase):
     """

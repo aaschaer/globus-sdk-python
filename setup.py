@@ -1,5 +1,21 @@
+import warnings
 import os.path
+import sys
 from setuptools import setup, find_packages
+
+
+if sys.version_info < (2, 7):
+    raise NotImplementedError("""\n
+##############################################################
+# globus-sdk does not support python versions older than 2.7 #
+##############################################################""")
+
+# warn on older/untested python3s
+# it's not disallowed, but it could be an issue for some people
+if sys.version_info > (3,) and sys.version_info < (3, 4):
+    warnings.warn(
+        'Installing globus-sdk on Python 3 versions older than 3.4 '
+        'may result in degraded functionality or even errors.')
 
 
 # single source of truth for package version
@@ -14,14 +30,16 @@ setup(name="globus-sdk",
       author="Globus Team",
       author_email="support@globus.org",
       url="https://github.com/globus/globus-sdk-python",
-      packages=find_packages(),
+      packages=find_packages(exclude=['tests', 'tests.*']),
       install_requires=[
           'requests>=2.0.0,<3.0.0',
-          'six>=1.10.0,<2.0.0'
+          'six>=1.10.0,<2.0.0',
+          'pyjwt[crypto]>=1.5.3,<2.0.0'
       ],
 
       extras_require={
-          'jwt': ['python-jose>=1.3.0,<2.0.0']
+          # empty extra included to support older installs
+          'jwt': []
       },
 
       include_package_data=True,
@@ -36,10 +54,10 @@ setup(name="globus-sdk",
           "Operating System :: POSIX",
           "Programming Language :: Python",
           "Programming Language :: Python :: 2.7",
-          "Programming Language :: Python :: 3.3",
           "Programming Language :: Python :: 3.4",
           "Programming Language :: Python :: 3.5",
           "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
           "Topic :: Communications :: File Sharing",
           "Topic :: Internet :: WWW/HTTP",
           "Topic :: Software Development :: Libraries :: Python Modules",

@@ -40,12 +40,78 @@ class TransferClient(BaseClient):
     that allow arbitrary keyword arguments will pass the extra arguments as
     query parameters.
 
-    **Parameters**
+    :param authorizer: An authorizer instance used for all calls to
+                       Globus Transfer
+    :type authorizer: :class:`GlobusAuthorizer\
+                      <globus_sdk.authorizers.base.GlobusAuthorizer>`
 
-        ``authorizer`` (:class:`GlobusAuthorizer\
-        <globus_sdk.authorizers.base.GlobusAuthorizer>`)
+    **Methods**
 
-          An authorizer instance used for all calls to Globus Transfer
+    *  :py:meth:`.get_endpoint`
+    *  :py:meth:`.update_endpoint`
+    *  :py:meth:`.create_endpoint`
+    *  :py:meth:`.delete_endpoint`
+    *  :py:meth:`.endpoint_search`
+    *  :py:meth:`.endpoint_autoactivate`
+    *  :py:meth:`.endpoint_deactivate`
+    *  :py:meth:`.endpoint_activate`
+    *  :py:meth:`.endpoint_get_activation_requirements`
+    *  :py:meth:`.my_effective_pause_rule_list`
+    *  :py:meth:`.my_shared_endpoint_list`
+    *  :py:meth:`.create_shared_endpoint`
+    *  :py:meth:`.endpoint_server_list`
+    *  :py:meth:`.get_endpoint_server`
+    *  :py:meth:`.add_endpoint_server`
+    *  :py:meth:`.update_endpoint_server`
+    *  :py:meth:`.delete_endpoint_server`
+    *  :py:meth:`.endpoint_role_list`
+    *  :py:meth:`.add_endpoint_role`
+    *  :py:meth:`.get_endpoint_role`
+    *  :py:meth:`.delete_endpoint_role`
+    *  :py:meth:`.endpoint_acl_list`
+    *  :py:meth:`.get_endpoint_acl_rule`
+    *  :py:meth:`.add_endpoint_acl_rule`
+    *  :py:meth:`.update_endpoint_acl_rule`
+    *  :py:meth:`.delete_endpoint_acl_rule`
+    *  :py:meth:`.bookmark_list`
+    *  :py:meth:`.create_bookmark`
+    *  :py:meth:`.get_bookmark`
+    *  :py:meth:`.update_bookmark`
+    *  :py:meth:`.delete_bookmark`
+    *  :py:meth:`.operation_ls`
+    *  :py:meth:`.operation_mkdir`
+    *  :py:meth:`.operation_rename`
+    *  :py:meth:`.operation_symlink`
+    *  :py:meth:`.get_submission_id`
+    *  :py:meth:`.submit_transfer`
+    *  :py:meth:`.submit_delete`
+    *  :py:meth:`.task_list`
+    *  :py:meth:`.task_event_list`
+    *  :py:meth:`.get_task`
+    *  :py:meth:`.update_task`
+    *  :py:meth:`.cancel_task`
+    *  :py:meth:`.task_wait`
+    *  :py:meth:`.task_pause_info`
+    *  :py:meth:`.task_successful_transfers`
+    *  :py:meth:`.endpoint_manager_monitored_endpoints`
+    *  :py:meth:`.endpoint_manager_hosted_endpoint_list`
+    *  :py:meth:`.endpoint_manager_get_endpoint`
+    *  :py:meth:`.endpoint_manager_acl_list`
+    *  :py:meth:`.endpoint_manager_task_list`
+    *  :py:meth:`.endpoint_manager_get_task`
+    *  :py:meth:`.endpoint_manager_task_event_list`
+    *  :py:meth:`.endpoint_manager_task_pause_info`
+    *  :py:meth:`.endpoint_manager_task_successful_transfers`
+    *  :py:meth:`.endpoint_manager_cancel_tasks`
+    *  :py:meth:`.endpoint_manager_cancel_status`
+    *  :py:meth:`.endpoint_manager_pause_tasks`
+    *  :py:meth:`.endpoint_manager_resume_tasks`
+    *  :py:meth:`.endpoint_manager_pause_rule_list`
+    *  :py:meth:`.endpoint_manager_create_pause_rule`
+    *  :py:meth:`.endpoint_manager_get_pause_rule`
+    *  :py:meth:`.endpoint_manager_update_pause_rule`
+    *  :py:meth:`.endpoint_manager_delete_pause_rule`
+
     """
     # disallow basic auth
     allowed_authorizer_types = [AccessTokenAuthorizer,
@@ -114,9 +180,10 @@ class TransferClient(BaseClient):
         """
         if data.get('myproxy_server'):
             if data.get('oauth_server'):
-                raise ValueError("an endpoint cannot be reconfigured to use "
-                                 "multiple identity providers for activation; "
-                                 "specify either MyProxy or OAuth, not both")
+                raise exc.GlobusSDKUsageError(
+                    "an endpoint cannot be reconfigured to use multiple "
+                    "identity providers for activation; specify either "
+                    "MyProxy or OAuth, not both")
             else:
                 data['oauth_server'] = None
         elif data.get('oauth_server'):
@@ -159,9 +226,10 @@ class TransferClient(BaseClient):
         in the REST documentation for details.
         """
         if data.get('myproxy_server') and data.get('oauth_server'):
-            raise ValueError("an endpoint cannot be created using multiple "
-                             "identity providers for activation; "
-                             "specify either MyProxy or OAuth, not both")
+            raise exc.GlobusSDKUsageError(
+                "an endpoint cannot be created using multiple identity "
+                "providers for activation; specify either MyProxy or OAuth, "
+                "not both")
 
         self.logger.info("TransferClient.create_endpoint(...)")
         return self.post("endpoint", data)
@@ -748,6 +816,9 @@ class TransferClient(BaseClient):
         >>> result = tc.add_endpoint_acl_rule(endpoint_id, rule_data)
         >>> rule_id = result["access_id"]
 
+        Note that if this rule is being created on a shared endpoint
+        the "path" field is relative to the "host_path" of the shared endpoint.
+
         **External Documentation**
 
         See
@@ -1157,7 +1228,7 @@ class TransferClient(BaseClient):
         >>> for task in tc.task_list():
         >>>     print("Task({}): {} -> {}".format(
         >>>         task["task_id"], task["source_endpoint"],
-        >>>         task["destination_endpoint"))
+        >>>         task["destination_endpoint"]))
 
         **External Documentation**
 
@@ -1330,13 +1401,13 @@ class TransferClient(BaseClient):
             self.logger.error(
                 "task_wait() timeout={} is less than minimum of 1s"
                 .format(timeout))
-            raise ValueError(
+            raise exc.GlobusSDKUsageError(
                 "TransferClient.task_wait timeout has a minimum of 1")
         if polling_interval < 1:
             self.logger.error(
                 "task_wait() polling_interval={} is less than minimum of 1s"
                 .format(polling_interval))
-            raise ValueError(
+            raise exc.GlobusSDKUsageError(
                 "TransferClient.task_wait polling_interval has a minimum of 1")
 
         # ensure that we always wait at least one interval, even if the timeout
@@ -1827,7 +1898,7 @@ class TransferClient(BaseClient):
         **External Documentation**
 
         See
-        `Cancel tasks as admin \
+        `Pause tasks as admin \
         <https://docs.globus.org/api/transfer/advanced_endpoint_management/#pause_tasks_as_admin>`_
         in the REST documentation for details.
         """
@@ -1973,7 +2044,7 @@ class TransferClient(BaseClient):
         **External Documentation**
 
         See
-        `Create pause rule \
+        `Get pause rule \
         <https://docs.globus.org/api/transfer/advanced_endpoint_management/#get_pause_rule>`_
         in the REST documentation for details.
         """
@@ -2002,7 +2073,7 @@ class TransferClient(BaseClient):
         >>>   "pause_ls": False,
         >>>   "pause_task_transfer_read": False
         >>> }
-        >>> update_result = tc.endpoint_manager_create_pause_rule(ep_data)
+        >>> update_result = tc.endpoint_manager_update_pause_rule(ep_data)
 
         **External Documentation**
 

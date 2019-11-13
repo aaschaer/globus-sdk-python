@@ -42,6 +42,18 @@ class AuthClient(BaseClient):
 
     You can, of course, use other kinds of Authorizers (notably the
     ``RefreshTokenAuthorizer``).
+
+    **Methods**
+
+    *  :py:meth:`.get_identities`
+    *  :py:meth:`.oauth2_get_authorize_url`
+    *  :py:meth:`.oauth2_exchange_code_for_tokens`
+    *  :py:meth:`.AuthClient.oauth2_refresh_token`
+    *  :py:meth:`.oauth2_validate_token`
+    *  :py:meth:`.oauth2_revoke_token`
+    *  :py:meth:`.oauth2_token`
+    *  :py:meth:`.oauth2_userinfo`
+
     """
     error_class = exc.AuthAPIError
 
@@ -162,7 +174,7 @@ class AuthClient(BaseClient):
         if not self.current_oauth2_flow_manager:
             self.logger.error(('OutOfOrderOperations('
                                'get_authorize_url before start_flow)'))
-            raise ValueError(
+            raise exc.GlobusSDKUsageError(
                 ('Cannot get authorize URL until starting an OAuth2 flow. '
                  'Call the oauth2_start_flow() method on this '
                  'AuthClient to resolve'))
@@ -189,7 +201,7 @@ class AuthClient(BaseClient):
         if not self.current_oauth2_flow_manager:
             self.logger.error(('OutOfOrderOperations('
                                'exchange_code before start_flow)'))
-            raise ValueError(
+            raise exc.GlobusSDKUsageError(
                 ('Cannot exchange auth code until starting an OAuth2 flow. '
                  'Call the oauth2_start_flow() method on this '
                  'AuthClient to resolve'))
@@ -348,7 +360,7 @@ class AuthClient(BaseClient):
 
         **Parameters**
 
-            ``response_type``
+            ``response_class``
               Defaults to :class:`OAuthTokenResponse \
               <globus_sdk.auth.token_response.OAuthTokenResponse>`. This is
               used by calls to the oauth2_token endpoint which need to

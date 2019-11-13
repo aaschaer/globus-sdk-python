@@ -1,6 +1,7 @@
 import logging
 import six
 
+from globus_sdk.exc import GlobusSDKUsageError
 from globus_sdk.base import merge_params
 from globus_sdk.authorizers import BasicAuthorizer
 from globus_sdk.auth.oauth2_constants import DEFAULT_REQUESTED_SCOPES
@@ -28,6 +29,14 @@ class ConfidentialAppAuthClient(AuthClient):
 
     Any keyword arguments given are passed through to the ``AuthClient``
     constructor.
+
+    **Methods**
+
+    *  :py:meth:`.oauth2_client_credentials_tokens`
+    *  :py:meth:`.ConfidentialAppAuthClient.oauth2_start_flow`
+    *  :py:meth:`.oauth2_get_dependent_tokens`
+    *  :py:meth:`.oauth2_token_introspect`
+
     """
     # checked by BaseClient to see what authorizers are allowed for this client
     # subclass
@@ -37,7 +46,7 @@ class ConfidentialAppAuthClient(AuthClient):
     def __init__(self, client_id, client_secret, **kwargs):
         if "authorizer" in kwargs:
             logger.error('ArgumentError(ConfidentialAppClient.authorizer)')
-            raise ValueError(
+            raise GlobusSDKUsageError(
                 "Cannot give a ConfidentialAppAuthClient an authorizer")
 
         AuthClient.__init__(
@@ -130,7 +139,7 @@ class ConfidentialAppAuthClient(AuthClient):
             state=state, refresh_tokens=refresh_tokens)
         return self.current_oauth2_flow_manager
 
-    def oauth2_get_dependent_tokens(self, token):
+    def oauth2_get_dependent_tokens(self, token, additional_params=None):
         """
         Does a `Dependent Token Grant
         <https://docs.globus.org/api/auth/reference/#dependent_token_grant_post_v2_oauth2_token>`_
@@ -157,14 +166,23 @@ class ConfidentialAppAuthClient(AuthClient):
           ``token`` (*string*)
             An Access Token as a raw string, being exchanged.
 
+          ``additional_params`` (*dict*)
+            A ``dict`` or ``None``, which specifies additional parameters
+            to include in the request body
+
         :rtype: :class:`OAuthTokenResponse
                 <globus_sdk.auth.token_response.OAuthTokenResponse>`
         """
         self.logger.info('Getting dependent tokens from access token')
-        return self.oauth2_token({
+        self.logger.debug('additional_params={}'.format(additional_params))
+        form_data = {
             'grant_type': 'urn:globus:auth:grant_type:dependent_token',
-            'token': token},
-            response_class=OAuthDependentTokenResponse)
+            'token': token}
+        if additional_params:
+            form_data.update(additional_params)
+
+        return self.oauth2_token(
+            form_data, response_class=OAuthDependentTokenResponse)
 
     def oauth2_token_introspect(self, token, include=None):
         """
@@ -175,6 +193,16 @@ class ConfidentialAppAuthClient(AuthClient):
         >>> ac = globus_sdk.ConfidentialAppAuthClient(
         ...     CLIENT_ID, CLIENT_SECRET)
         >>> ac.oauth2_token_introspect('<token_string>')
+
+        Get information about a Globus Auth token including the full identity
+        set of the user to whom it belongs
+
+        >>> ac = globus_sdk.ConfidentialAppAuthClient(
+        ...     CLIENT_ID, CLIENT_SECRET)
+        >>> data = ac.oauth2_token_introspect(
+        ...     '<token_string>', include='identity_set')
+        >>> for identity in data['identity_set']:
+        >>>     print('token authenticates for "{}"'.format(identity))
 
         **Parameters**
 

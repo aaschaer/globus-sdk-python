@@ -20,18 +20,18 @@ Source code is available at https://github.com/globus/globus-sdk-python.
 Table of Contents
 =================
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    installation
    tutorial
    clients
    responses
    exceptions
+   local_endpoints
    oauth
    authorization
    config
    deprecations
-   optional_dependencies
    examples
 
 License

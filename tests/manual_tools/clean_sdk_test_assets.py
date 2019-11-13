@@ -2,18 +2,20 @@
 from __future__ import unicode_literals
 import globus_sdk
 
+import os
+os.environ["GLOBUS_SDK_ENVIRONMENT"] = "sandbox"
+
 
 # removes all endpoints, bookmarks, and files/folders on tutorial enpdoints
 # intended to be used to clean the testing areas for the SDK Tester user
 def clean():
 
     # constants
-    SDK_USER_ID = "84942ca8-17c4-4080-9036-2f58e0093869"
-    GO_EP1_ID = "ddb59aef-6d04-11e5-ba46-22000b92c6ec"
-    GO_EP2_ID = "ddb59af0-6d04-11e5-ba46-22000b92c6ec"
-    # TODO: remove EP3 when EP1 and EP2 support symlinks
-    GO_EP3_ID = "4be6107f-634d-11e7-a979-22000bf2d287"
-    CLIENT_ID = 'd0f1d9b0-bd81-4108-be74-ea981664453a'
+    SDK_USER_ID = "123fac83-88e6-4ca6-8d43-afff40786fb1"
+    GO_EP1_ID = "25fbda1e-5ae6-11e5-b577-22000b47140e"
+    GO_EP2_ID = "25fbda23-5ae6-11e5-b577-22000b47140e"
+    GO_EP3_ID = "b88da93e-4186-11e7-8e40-22000b508383"
+    CLIENT_ID = "fbe957d3-fc65-4d8c-a8b1-78d1cafef075"
     SCOPES = 'urn:globus:auth:scope:transfer.api.globus.org:all'
     get_input = getattr(__builtins__, 'raw_input', input)
 
@@ -41,7 +43,7 @@ def clean():
     auth_client = globus_sdk.AuthClient(authorizer=authorizer)
     res = auth_client.get('/p/whoami')
     if res['identities'][0]["id"] != SDK_USER_ID:  # assume the primary ID
-        print("The primary ID was not the SDK Tester, stopping clean")
+        print("The primary ID {} was not the SDK Tester, stopping clean".format(res['identities'][0]["id"]))
         return
 
     # now clean test assets

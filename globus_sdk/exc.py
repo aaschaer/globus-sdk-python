@@ -1,5 +1,4 @@
 import logging
-import textwrap
 import six
 import requests
 
@@ -10,6 +9,16 @@ class GlobusError(Exception):
     """
     Root of the Globus Exception hierarchy.
     Stub class.
+    """
+
+
+class GlobusSDKUsageError(GlobusError, ValueError):
+    """
+    A ``GlobusSDKUsageError`` may be thrown in cases in which the SDK
+    detects that it is being used improperly.
+
+    These errors typically indicate that some contract regarding SDK usage
+    (e.g. required order of operations) has been violated.
     """
 
 
@@ -113,6 +122,27 @@ class GlobusAPIError(GlobusError):
         self.message = text
 
 
+class SearchAPIError(GlobusAPIError):
+    """
+    Error class for the Search API client. In addition to the
+    inherited ``code`` and ``message`` instance variables, provides:
+
+    :ivar error_data: Additional object returned in the error response. May be
+                      a dict, list, or None.
+    """
+    def __init__(self, r):
+        self.error_data = None
+        GlobusAPIError.__init__(self, r)
+
+    def _get_args(self):
+        return (self.http_status, self.code, self.message)
+
+    def _load_from_json(self, data):
+        self.code = data["code"]
+        self.message = data["message"]
+        self.error_data = data.get("error_data")
+
+
 class TransferAPIError(GlobusAPIError):
     """
     Error class for the Transfer API client. In addition to the
@@ -198,6 +228,11 @@ class GlobusTimeoutError(NetworkError):
     """The REST request timed out."""
 
 
+class GlobusConnectionTimeoutError(GlobusTimeoutError):
+    """The request timed out during connection establishment.
+    These errors are safe to retry."""
+
+
 class GlobusConnectionError(NetworkError):
     """A connection error occured while making a REST request."""
 
@@ -205,38 +240,12 @@ class GlobusConnectionError(NetworkError):
 def convert_request_exception(exc):
     """Converts incoming requests.Exception to a Globus NetworkError"""
 
+    if isinstance(exc, requests.ConnectTimeout):
+        return GlobusConnectionTimeoutError(
+            "ConnectTimeoutError on request", exc)
     if isinstance(exc, requests.Timeout):
         return GlobusTimeoutError("TimeoutError on request", exc)
     elif isinstance(exc, requests.ConnectionError):
         return GlobusConnectionError("ConnectionError on request", exc)
     else:
         return NetworkError("NetworkError on request", exc)
-
-
-class GlobusOptionalDependencyError(GlobusError, NotImplementedError):
-    """
-    Error class for attempts to use features only enabled via optional
-    dependencies without those dependencies installed.
-
-    **Parameters**
-
-        ``dep_names`` (*string list*)
-          Package names for the required dependencies for this feature,
-          possibly also encoding the version requirements for those packages.
-
-        ``feature_name`` (*string*)
-          Name of the method, property, class, or other construct which
-          requires these dependencies
-
-        ``message`` (*string*)
-          An additional message to include
-    """
-    def __init__(self, dep_names, feature_name):
-        self.message = textwrap.dedent("""\
-        You are missing optional dependencies required in order to use {0}
-        In order to use this feature of the Globus SDK, you must install:
-          {1}
-
-        For more information, visit our optional dependency documentation:
-        http://globus.github.io/globus-sdk-python/optional_dependencies.html
-        """.format(feature_name, "\n  ".join(dep_names)))

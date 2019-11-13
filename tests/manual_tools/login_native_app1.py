@@ -2,8 +2,10 @@
 
 from globus_sdk import NativeAppAuthClient
 
+import os
+os.environ["GLOBUS_SDK_ENVIRONMENT"] = "sandbox"
 
-CLIENT_ID = "d0f1d9b0-bd81-4108-be74-ea981664453a"
+CLIENT_ID = "fbe957d3-fc65-4d8c-a8b1-78d1cafef075"
 SCOPES = ("openid profile email "
           "urn:globus:auth:scope:transfer.api.globus.org:all")
 

@@ -49,6 +49,9 @@ class TransferClientTestCase(CapturedIOTestCase):
         sdktester1a and sdktester2b
         Cleans out any old sharing files before running tests
         """
+        import os
+        os.environ["GLOBUS_SDK_ENVIRONMENT"] = "sandbox"
+
         ac = globus_sdk.NativeAppAuthClient(
             client_id=get_client_data()["native_app_client1"]["id"])
 

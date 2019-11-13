@@ -1,8 +1,7 @@
-GO_EP1_ID = "ddb59aef-6d04-11e5-ba46-22000b92c6ec"
-GO_EP2_ID = "ddb59af0-6d04-11e5-ba46-22000b92c6ec"
-# TODO: stop using EP3 once EP1 and EP2 support symlinks
-GO_EP3_ID = "4be6107f-634d-11e7-a979-22000bf2d287"
-GO_S3_ID = "cf9bcaa5-6d04-11e5-ba46-22000b92c6ec"
+GO_EP1_ID = "25fbda1e-5ae6-11e5-b577-22000b47140e"
+GO_EP2_ID = "25fbda23-5ae6-11e5-b577-22000b47140e"
+GO_EP3_ID = "b88da93e-4186-11e7-8e40-22000b508383"
+GO_S3_ID = "cf9bcaa5-6d04-11e5-ba46-22000b92c6ec" # not on sandbox
 GO_EP1_SERVER_ID = 207976
 
 # ------ #
@@ -10,34 +9,36 @@ GO_EP1_SERVER_ID = 207976
 # ------ #
 # sdktester1a@globusid.org transfer refresh token for Native App 1
 SDKTESTER1A_NATIVE1_TRANSFER_RT = (
-    "AQEAAAAAAASDAPumek-IGMDKAOXsUbxjmzBHPxLkhE"
-    "9ifT1xu97ryNLQCW1cmetSrk_BQxOQN85GhcOm1Cct")
+    "Ag40M0dwG41040wVjGvlOQKmbkYqXdq9KY2jVk5P03qBVaXkeMiYUy7n77KwzNalkXW5wdBlx"
+    "9v2Q5Qvo3G7krJyEXwOw")
 # sdktester1a@globusid.org auth refresh token for Native App 1
 SDKTESTER1A_NATIVE1_AUTH_RT = (
-    "AQEAAAAAAASC_x9oE-oRBgm1ggk6VHWZDKCRa9iG8p"
-    "hwwFxaGjT4h_7iCdf_SFjTHQDDpYxVySJgtg3nzb3p")
+    "Ag6GYye6KOvXrYK9JlrmvV70d3ojBO2M4xvr7xOvMEG1l0rPb5SPUP2lw8gr1wgY2vD8v4dj"
+    "N9GK5DWv6nnKaY6ObKoMd")
 # openid JWT gotten from Native App 1 login flow, expired
 SDKTESTER1A_NATIVE1_ID_TOKEN = (
-    "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkMGYxZDliMC1iZDgxLTQxMDgt"
-    "YmU3NC1lYTk4MTY2NDQ1M2EiLCJzdWIiOiI4NDk0MmNhOC0xN2M0LTQwODAtOTAzNi0yZjU4Z"
-    "TAwOTM4NjkiLCJpc3MiOiJodHRwczovL2F1dGguZ2xvYnVzLm9yZyIsInByZWZlcnJlZF91c2"
-    "VybmFtZSI6InNka3Rlc3RlcjFhQGdsb2J1c2lkLm9yZyIsImF0X2hhc2giOiIza3JTZmR2MHh"
-    "LbUF2STFQS0JPeG1NeG9OXzBGSlBZazhTUEZibF9GYnY0IiwiZXhwIjoxNDg4NjQ0NDA5LCJp"
-    "YXQiOjE0ODg0NzE2MDksImVtYWlsIjoic2lyb3NlbitzZGt0ZXN0ZXIxYUBnbG9idXMub3JnI"
-    "iwibmFtZSI6IlNESyBUZXN0ZXIifQ.uAG3F5PkjaWc7YdOjZKBp4-s8Dez23-vJRD_5ZR9CCF"
-    "7oZCpOC1r98ApwV5urt7cKUGgnKMFOdtzSu1stXGeSn4vjH5fWgB37muq7gxMvVpAUW4jF77R"
-    "eTxQdaFbWdSStBi075WqCD8QpHXI0z_RqXFKK6fbGEZNkGfi9R_47YhcxdJW0ek5kFAqEha7F"
-    "CS3yAqBpysRv_ekqgeLRSv9xvJqkidH40EFq8JO2ovWcioR0KZ-Np3lOZgrmn7h7aJuXArsPq"
-    "ZCjO3990SEvM1mD5sph41dpxJA0cK4w-18NxfOVAcA6PF3SmIUwNlyjghl_GHIM7ws5KL8ne9"
-    "8Php4sg")
+    "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJmYmU5NTdkMy1mYzY1LTRkOGMt"
+    "YThiMS03OGQxY2FmZWYwNzUiLCJpZGVudGl0eV9wcm92aWRlcl9kaXNwbGF5X25hbWUiOiJHb"
+    "G9idXMgSUQiLCJzdWIiOiIxMjNmYWM4My04OGU2LTRjYTYtOGQ0My1hZmZmNDA3ODZmYjEiLC"
+    "Jpc3MiOiJodHRwczovL2F1dGguc2FuZGJveC5nbG9idXNjcy5pbmZvIiwicHJlZmVycmVkX3"
+    "VzZXJuYW1lIjoic2RrdGVzdGVyMWFAZ2xvYnVzaWQub3JnIiwiYXRfaGFzaCI6ImdacW1MOC"
+    "1vSkM4QjlvZ2ZZeUZWazlYZkdqZUVQYWZBclR1WkJsV2FhLVUiLCJpZGVudGl0eV9wcm92aW"
+    "RlciI6IjQxMTQzNzQzLWYzYzgtNGQ2MC1iYmRiLWVlZWNhYmE4NWJkOSIsImV4cCI6MTU3Mz"
+    "g0NTMwMSwiaWF0IjoxNTczNjcyNTAxLCJvcmdhbml6YXRpb24iOiJHbG9idXMiLCJlbWFpbCI"
+    "6ImFhc2NoYWVyK3Nka3Rlc3RlckBnbG9idXMub3JnIiwibmFtZSI6IlNESyBUZXN0ZXIifQ.d"
+    "IJMKs4SFfDxyk7-IPCvc_whDWlPP8Fobo6Yh5QPUa2jvLqmGxxfyqMC1MQy_kanrlE4GRj1x"
+    "XJiaru4E4K-xUaaCpOc0BGp2QTcoHlmSAcI1NIrT0VQtrLH5w7PSMZrT8hAnu0KHARHlNJly"
+    "VA6iSAPFSxBI2Svy5g6Bgu4IW9TnKYIx9o6QfwocKLns5ZOdAOo21S8PEPE85e3PIYVlndI"
+    "RLpEgTs8K--JhLX3_TEheJZr5hvzB1PmFP0vqY7djP1Aj-jDen8ESlFEpgB-1s_SNhT3Btc"
+    "OFd4oBiCSWK3xOELYXQkUbsEjbPbKXobzaSHVUdWw97Ppa_b9mQQUew")
 # access token returned  along with id_token, expired
 SDKTESTER1A_ID_ACCESS_TOKEN = (
-    "AQBYuuk5AAAAAAAEgv9acyfVlpa9Jhe3A1LhzhzofL"
-    "tYuM3-yBKxA7yZ6QAN9tosD4xRsxwaQ35pUXGM7dCj")
+    "Ag16K1bnqdX14g0egzzNOJYg6Wed74YYV7gJPzKJV7OK4mlEgDt2C53B6yg0bjrgNB93Mz48"
+    "5G722gu4E6xgWSM7ofq3Vc01g")
 # sdktester2b@globusid.org transfer refresh token for Native App 1
 SDKTESTER2B_NATIVE1_TRANSFER_RT = (
-    "AQEAAAAAAATZj3h-kuwerpWbwQYoWECsTrjqoaJv5Q"
-    "zPoq52QBnfxrOszPl714hF6iISZgTe0061E6sQPwjt")
+    "AgM8D8Pw6nD6lE39kJJN7NDyqPWobBwX3PXmG4b0qqVY7zjaO6S6UBa3wjX1kn74Qp3XyyvDK"
+    "qnQm6EoyBQlG6Dy5PBM")
 # ---------- #
 # end tokens #
 # ---------- #

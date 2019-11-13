@@ -7,7 +7,7 @@ from six.moves.configparser import (
     ConfigParser, MissingSectionHeaderError,
     NoOptionError, NoSectionError)
 
-from globus_sdk.exc import GlobusError
+from globus_sdk.exc import GlobusError, GlobusSDKUsageError
 
 logger = logging.getLogger(__name__)
 
@@ -106,6 +106,7 @@ class GlobusConfigParser(object):
 
         if value is not None:
             value = type_cast(value)
+
         return value
 
 
@@ -131,9 +132,26 @@ def get_service_url(environment, service):
     option = service + "_service"
     # TODO: validate with urlparse?
     url = p.get(option, environment=environment)
+    if url is None:
+        raise GlobusSDKUsageError(
+            ('Failed to find a url for service "{}" in environment "{}". '
+             "Please double-check that GLOBUS_SDK_ENVIRONMENT is set "
+             "correctly, or not set at all")
+            .format(service, environment))
     logger.debug("Service URL Lookup Result: \"{}\" is at \"{}\""
                  .format(service, url))
     return url
+
+
+def get_http_timeout(environment):
+    p = _get_parser()
+    value = p.get("http_timeout", environment=environment,
+                  failover_to_general=True, check_env=True,
+                  type_cast=float)
+    if value is None:
+        value = 60
+    logger.debug('default http_timeout set to {}'.format(value))
+    return value
 
 
 def get_ssl_verify(environment):
@@ -157,15 +175,25 @@ def _bool_cast(value):
     raise ValueError("Invalid config bool")
 
 
-def get_default_environ():
+def get_globus_environ(inputenv=None):
     """
-    Get the default environment to look for in the config, as a string.
+    Get the environment to look for in the config, as a string.
+
     Typically just "default", but it can be overridden with
     `GLOBUS_SDK_ENVIRONMENT` in the shell environment. In that case, any client
     which does not explicitly specify its environment will use this value.
+
+    :param inputenv: An environment which was passed, e.g. to a client
+                     instantiation
     """
-    env = os.environ.get('GLOBUS_SDK_ENVIRONMENT', 'default')
+    if inputenv is None:
+        env = os.environ.get('GLOBUS_SDK_ENVIRONMENT', 'default')
+    else:
+        env = inputenv
+
+    if env == 'production':
+        env = 'default'
     if env != 'default':
         logger.info(('On lookup, non-default environment: '
-                     'GLOBUS_SDK_ENVIRONMENT={}'.format(env)))
+                     'globus_environment={}'.format(env)))
     return env
