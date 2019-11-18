@@ -738,6 +738,7 @@ class TransferClientTests(TransferClientTestCase):
             timeout=DEFAULT_TASK_WAIT_TIMEOUT,
             polling_interval=DEFAULT_TASK_WAIT_POLLING_INTERVAL))
 
+    '''
     @retry_errors()
     def test_submit_transfer_keep_recursive_symlinks(self):
         """
@@ -863,6 +864,7 @@ class TransferClientTests(TransferClientTestCase):
         # confirm the transfer_item transfered the target
         ls_doc = self.tc.operation_ls(GO_EP3_ID, filter="name:" + file_name)
         self.assertIsNone(ls_doc["DATA"][0]["link_target"])
+    '''
 
     @retry_errors()
     def test_submit_delete(self):

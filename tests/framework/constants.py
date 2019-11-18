@@ -2,7 +2,7 @@ GO_EP1_ID = "25fbda1e-5ae6-11e5-b577-22000b47140e"
 GO_EP2_ID = "25fbda23-5ae6-11e5-b577-22000b47140e"
 GO_EP3_ID = "b88da93e-4186-11e7-8e40-22000b508383"
 GO_S3_ID = "cf9bcaa5-6d04-11e5-ba46-22000b92c6ec" # not on sandbox
-GO_EP1_SERVER_ID = 207976
+GO_EP1_SERVER_ID = 16691
 
 # ------ #
 # tokens #
